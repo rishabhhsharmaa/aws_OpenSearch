@@ -39,12 +39,6 @@ variable "tags" {
   }
 }
 
-variable "opensearch_count" {
-  type        = number
-  description = "Number of OpenSearch creation"
-  default     = 1
-}
-
 variable "domain" {
   type        = string
   description = "The name of the OpenSearch Domain."
@@ -76,12 +70,6 @@ variable "zone_awareness_enabled" {
   default     = true
 }
 
-variable "master_instance_enabled" {
-  type        = bool
-  description = "(Optional) Whether dedicated main nodes are enabled for the cluster."
-  default     = false
-}
-
 variable "master_instance_count" {
   type        = number
   description = "Optional) Number of dedicated main nodes in the cluster."
@@ -92,12 +80,6 @@ variable "master_instance_type" {
   type        = string
   description = "(Optional) Instance type of the dedicated main nodes in the cluster."
   default     = "r6g.large.search"
-}
-
-variable "warm_instance_enabled" {
-  type        = bool
-  description = "(Optional) Whether to enable warm storage."
-  default     = false
 }
 
 variable "warm_instance_count" {
@@ -139,6 +121,12 @@ variable "iops" {
 
 
 # vpc_options
+variable "enable_vpc_option" {
+  type        = bool
+  description = "(Required) If you want to enable VPC option"
+  default     = true
+}
+
 variable "subnet_ids" {
   type        = list(string)
   description = "(Required) Subnet id's for OpenSearch resource"
@@ -147,6 +135,29 @@ variable "subnet_ids" {
 variable "security_group_ids" {
   type        = list(string)
   description = "(Required) Security Group id's for OpenSearch resource"
+}
+
+# advanced_security_options
+variable "advanced_security_options_enable" {
+  type        = bool
+  description = "(Required, Forces new resource) Whether advanced security is enabled."
+  default     = false
+}
+
+variable "internal_user_database_enabled" {
+  type        = bool
+  description = "(Optional, Default: false) Whether the internal user database is enabled. If not set, defaults to false by the AWS API."
+  default     = false
+}
+
+variable "master_user_name" {
+  type = string
+  description = "(Optional) Main user's username, which is stored in the Amazon Elasticsearch Service domain's internal database. Only specify if internal_user_database_enabled is set to true."
+}
+
+variable "master_user_password" {
+  type = string
+  description = "(Optional) Main user's password, which is stored in the Amazon Elasticsearch Service domain's internal database. Only specify if internal_user_database_enabled is set to true."
 }
 
 # domain_endpoint_options

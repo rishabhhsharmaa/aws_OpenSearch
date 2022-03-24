@@ -3,21 +3,20 @@ resource "aws_iam_service_linked_role" "es" {
 }
 
 resource "aws_elasticsearch_domain" "es" {
-  count                 = var.opensearch_count
   domain_name           = var.domain
   elasticsearch_version = var.elasticsearch_version
 
   cluster_config {
-    dedicated_master_enabled = var.master_instance_enabled
-    dedicated_master_count   = var.master_instance_enabled == true ? var.master_instance_count : null
-    dedicated_master_type    = var.master_instance_enabled == true ? var.master_instance_type : null
+    dedicated_master_enabled = var.master_instance_count >= 2 ? true : false
+    dedicated_master_count   = var.master_instance_count >= 2 ? var.master_instance_count : null
+    dedicated_master_type    = var.master_instance_count >= 2 ? var.master_instance_type : null
 
     instance_count = var.instance_count
     instance_type  = var.instance_type
 
-    warm_enabled = var.warm_instance_enabled
-    warm_count   = var.warm_instance_enabled == true ? var.warm_instance_count : null
-    warm_type    = var.warm_instance_enabled == true ? var.warm_instance_type : null
+    warm_enabled = var.warm_instance_count >= 2 ? true : false
+    warm_count   = var.warm_instance_count >= 2 ? var.warm_instance_count : null
+    warm_type    = var.warm_instance_count >= 2 ? var.warm_instance_type : null
 
     zone_awareness_enabled = var.zone_awareness_enabled
   }
@@ -29,9 +28,25 @@ resource "aws_elasticsearch_domain" "es" {
     iops        = var.ebs_enabled == true ? var.iops : null
   }
 
-  vpc_options {
-    subnet_ids         = var.subnet_ids
-    security_group_ids = var.security_group_ids
+
+  dynamic "vpc_options" {
+    for_each = var.enable_vpc_option == true ? [1] : []
+    content {
+      subnet_ids         = var.subnet_ids
+      security_group_ids = var.security_group_ids
+    }
+  }
+
+  advanced_security_options {
+    enabled                        = var.advanced_security_options_enable
+    internal_user_database_enabled = var.internal_user_database_enabled
+    dynamic "master_user_options" {
+      for_each = var.internal_user_database_enabled == true ? [1] : []
+      content {
+        master_user_name     = var.master_user_name
+        master_user_password = var.master_user_password
+      }
+    }
   }
 
   advanced_options = {
@@ -61,13 +76,19 @@ CONFIG
     custom_endpoint_certificate_arn = var.custom_endpoint_enabled == true ? data.aws_acm_certificate.acm.arn : null
   }
 
-  node_to_node_encryption {
-    enabled = var.node_to_node_encryption
+  dynamic "node_to_node_encryption" {
+    for_each = var.node_to_node_encryption == true ? [1] : []
+    content {
+      enabled = var.node_to_node_encryption
+    }
   }
 
-  encrypt_at_rest {
-    enabled    = var.encrypt_at_rest
-    kms_key_id = var.encrypt_at_rest == true ? data.aws_kms_key.by_alias.arn : null
+  dynamic "encrypt_at_rest" {
+    for_each = var.encrypt_at_rest == true ? [1] : []
+    content {
+      enabled    = var.encrypt_at_rest
+      kms_key_id = data.aws_kms_key.by_alias.arn
+    }
   }
 
   tags = merge(

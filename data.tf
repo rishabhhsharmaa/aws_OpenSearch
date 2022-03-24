@@ -8,6 +8,5 @@ data "aws_acm_certificate" "acm" {
 }
 
 data "aws_kms_key" "by_alias" {
-  key_id = "29e4f751-2990-4a81-a4bf-f7e0f1ffd008"
+  key_id = "alias/aws/es"
 }
-
