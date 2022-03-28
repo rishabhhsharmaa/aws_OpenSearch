@@ -101,3 +101,11 @@ CONFIG
   depends_on = [aws_iam_service_linked_role.es]
 }
 
+resource "aws_route53_record" "opensearch" {
+  zone_id = var.route53_zone_id
+  name    = var.domain
+  type    = "CNAME"
+  ttl     = "60"
+
+  records = [aws_elasticsearch_domain.es.endpoint]
+}

@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.8.0"
+    }
+  }
+}
+
 provider "aws" {
   region = var.region
 }
@@ -34,6 +43,7 @@ module "aws_opensearch" {
   acm_certificate_domain           = "www.mydevopsprojects.co.in"
   statuses                         = ["ISSUED"]
   route53_zone                     = module.network_skeleton.route53_name
+  route53_zone_id                  = module.network_skeleton.route53_zone_id
   domain                           = "www"
   elasticsearch_version            = "OpenSearch_1.1"
   instance_count                   = 2

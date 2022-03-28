@@ -17,6 +17,11 @@ variable "route53_zone" {
   description = "(Required) Domain name of route53 zone"
 }
 
+variable "route53_zone_id" {
+  type        = string
+  description = "(Required) ID of route53 zone"
+}
+
 variable "iam_aws_service_name" {
   type        = string
   description = "(Required) IAM aws service name"

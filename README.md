@@ -15,7 +15,7 @@ This module provides you the functionality to modify your opensearch as per your
 
 ## Terraform versions
 
-Terraform 0.14.9
+Terraform 4.8.0
 
 ## Resources
 
@@ -23,6 +23,7 @@ Terraform 0.14.9
 | ---------------------------------------------------------------------------------------------------------------------------------- | ----------- |
 | [aws_elasticsearch_domain](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elasticsearch_domain)       | Resource    |
 | [aws_iam_service_linked_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_service_linked_role) | Resource    |
+| [aws_route53_record](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | Resource    |
 | [aws_caller_identity](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity)              | Data Source |
 | [aws_acm_certificate](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/acm_certificate)              | Data Source |
 | [aws_kms_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/kms_key)                              | Data Source |
@@ -69,7 +70,10 @@ Terraform 0.14.9
 
 | Name | Description |
 | ---- | ----------- |
-
+| cluster_name | The name of the OpenSearch cluster. |
+| cluster_version | "The version of the OpenSearch cluster." |
+| cluster_endpoint | The endpoint URL of the OpenSearch cluster. |
+| kibana_endpoint | The endpoint URL of Kibana. |
 ## Tags
 
 - Tags are assigned to resources with name variable as prefix.
@@ -95,6 +99,7 @@ module "aws_opensearch" {
   acm_certificate_domain  = "ACM Domain name"
   statuses                = ["ISSUED"]
   route53_zone            = "Route 53 Zone name"
+  route53_zone_id         = "Route 53 Zone ID"
   domain                  = "www"
   elasticsearch_version   = "OpenSearch_1.1"
   instance_count          = 2
