@@ -99,6 +99,12 @@ variable "warm_instance_type" {
   default     = "ultrawarm1.medium.elasticsearch"
 }
 
+variable "availability_zones" {
+  description = "The number of availability zones for the OpenSearch cluster. Valid values: 1, 2 or 3."
+  type        = number
+  default     = 2
+}
+
 # ebs_options
 variable "ebs_enabled" {
   type        = bool
@@ -135,6 +141,24 @@ variable "vpc_options" {
   default = []
 }
 
+variable "automated_snapshot_start_hour" {
+  type        = number
+  description = "Hour at which automated snapshots are taken, in UTC"
+  default     = 0
+}
+
+# Cognito Option
+variable "cognito_options" {
+  description = "(Optional) Whether to enable Amazon Cognito authentication with Kibana"
+  type = list(object({
+    enabled          = bool
+    user_pool_id     = string 
+    identity_pool_id = string
+    role_arn         = string
+  }))
+  default = []
+}
+
 # advanced_security_options
 variable "advanced_security_options_enable" {
   type        = bool
@@ -151,7 +175,7 @@ variable "internal_user_database_enabled" {
 variable "master_user_options" {
   description = "(Optional) values would be username and password"
   type = list(object({
-    master_user_name         = string
+    master_user_name     = string
     master_user_password = string
   }))
   default = []

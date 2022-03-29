@@ -62,6 +62,9 @@ Terraform 4.8.0
 | custom_endpoint_enabled          | Whether to enable custom endpoint for the Elasticsearch domain                                                                                                       | `bool`         |         |   Yes    |
 | node_to_node_encryption          | Whether to enable node-to-node encryption. If the node_to_node_encryption block is not provided then this defaults to false                                          | `bool`         |         |   Yes    |
 | encrypt_at_rest                  | Whether to enable encryption at rest. If the encrypt_at_rest block is not provided then this defaults to false                                                       | `bool`         |         |   Yes    |
+| automated_snapshot_start_hour                  | Hour at which automated snapshots are taken, in UTC                                                       | `number`         |         |   no    |
+| cognito_options                  | Whether to enable Amazon Cognito authentication with Kibana                                                       | `list`         |         |   no    |
+| availability_zones                  | The number of availability zones for the OpenSearch cluster. Valid values: 1, 2 or 3.                                                       | `number`         |         |   yes    |
 
 ## Output
 
@@ -88,10 +91,6 @@ Check out these related projects.
 ```hcl
 module "aws_opensearch" {
   source                  = "Location of the resource file"
-  vpc_options = [{
-    subnet_ids         = [ subnet id's ]
-    security_group_ids = [Security group id]
-  }]
   name                    = aws-opensearch
   tags                    = "Required Tags"
   acm_certificate_domain  = "ACM Domain name"
@@ -123,6 +122,16 @@ module "aws_opensearch" {
   master_user_options = [{
     master_user_name     = "username"
     master_user_password = "password"
+  }]
+  vpc_options = [{
+    subnet_ids         = [ subnet id's ]
+    security_group_ids = [Security group id]
+  }]
+  cognito_options = [{
+    enabled          =  "Whether to enable Amazon Cognito authentication with Kibana"
+    user_pool_id     =  "The ID of the Cognito User Pool to use"
+    identity_pool_id =  "The ID of the Cognito Identity Pool to use"
+    role_arn         =  "ARN of the IAM role that has the AmazonESCognitoAccess policy attached"
   }]
 }
 ```

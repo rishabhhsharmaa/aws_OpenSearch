@@ -18,7 +18,14 @@ resource "aws_elasticsearch_domain" "es" {
     warm_count   = var.warm_instance_count >= 2 ? var.warm_instance_count : null
     warm_type    = var.warm_instance_count >= 2 ? var.warm_instance_type : null
 
-    zone_awareness_enabled = var.zone_awareness_enabled
+    zone_awareness_enabled = (var.availability_zones > 1) ? true : false
+
+    dynamic "zone_awareness_config" {
+      for_each = (var.availability_zones > 1) ? [var.availability_zones] : []
+      content {
+        availability_zone_count = zone_awareness_config.value
+      }
+    }
   }
 
   ebs_options {
@@ -33,6 +40,20 @@ resource "aws_elasticsearch_domain" "es" {
     content {
       subnet_ids         = vpc_options.value.subnet_ids
       security_group_ids = vpc_options.value.security_group_ids
+    }
+  }
+
+  snapshot_options {
+    automated_snapshot_start_hour = var.automated_snapshot_start_hour
+  }
+
+  dynamic "cognito_options" {
+    for_each = var.cognito_options
+    content {
+      enabled          = cognito_options.value.enabled
+      user_pool_id     = cognito_options.value.user_pool_id
+      identity_pool_id = cognito_options.value.identity_pool_id
+      role_arn         = cognito_options.value.role_arn
     }
   }
 

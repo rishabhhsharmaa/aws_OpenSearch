@@ -39,6 +39,12 @@ module "aws_opensearch" {
     subnet_ids         = [module.network_skeleton.public_subnet_ids[0], module.network_skeleton.public_subnet_ids[1]]
     security_group_ids = [module.network_skeleton.web_sg_id]
   }]
+  # cognito_options = [{
+  #   enabled          =  "Whether to enable Amazon Cognito authentication with Kibana"
+  #   user_pool_id     =  "The ID of the Cognito User Pool to use"
+  #   identity_pool_id =  "The ID of the Cognito Identity Pool to use"
+  #   role_arn         =  "ARN of the IAM role that has the AmazonESCognitoAccess policy attached"
+  # }]
   name                             = var.name
   tags                             = var.tags
   acm_certificate_domain           = "www.mydevopsprojects.co.in"
@@ -47,17 +53,19 @@ module "aws_opensearch" {
   route53_zone_id                  = module.network_skeleton.route53_zone_id
   domain                           = "www"
   elasticsearch_version            = "OpenSearch_1.1"
+  availability_zones               = 2
   instance_count                   = 2
   instance_type                    = "m4.large.elasticsearch"
   zone_awareness_enabled           = true
-  master_instance_count            = 0
-  master_instance_type             = "r6g.large.search"
-  warm_instance_count              = 0
+  master_instance_count            = 3
+  master_instance_type             = "m4.large.elasticsearch"
+  warm_instance_count              = 2
   warm_instance_type               = "ultrawarm1.medium.elasticsearch"
   ebs_enabled                      = true
   volume_size                      = 10
   volume_type                      = "gp2"
   iops                             = 0
+  automated_snapshot_start_hour    = 0
   enforce_https                    = true
   tls_security_policy              = "Policy-Min-TLS-1-2-2019-07"
   custom_endpoint_enabled          = true
