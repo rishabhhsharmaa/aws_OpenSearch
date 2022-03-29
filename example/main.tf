@@ -35,10 +35,10 @@ module "network_skeleton" {
 
 module "aws_opensearch" {
   source = "../"
-  # vpc_options = [{
-  #   subnet_ids         = [module.network_skeleton.public_subnet_ids[0], module.network_skeleton.public_subnet_ids[1]]
-  #   security_group_ids = [module.network_skeleton.web_sg_id]
-  # }]
+  vpc_options = [{
+    subnet_ids         = [module.network_skeleton.public_subnet_ids[0], module.network_skeleton.public_subnet_ids[1]]
+    security_group_ids = [module.network_skeleton.web_sg_id]
+  }]
   name                             = var.name
   tags                             = var.tags
   acm_certificate_domain           = "www.mydevopsprojects.co.in"
