@@ -53,13 +53,10 @@ Terraform 4.8.0
 | volume_size                      | (Required if ebs_enabled is set to true.) Size of EBS volumes attached to data nodes (in GiB).                                                                       | `number`       |         |   Yes    |
 | volume_type                      | Type of EBS volumes attached to data nodes.                                                                                                                          | `string`       |         |    No    |
 | iops                             | Baseline input/output (I/O) performance of EBS volumes attached to data nodes. Applicable only for the Provisioned IOPS EBS volume type                              | `number`       |         |    No    |
-| enable_vpc_option                | If you want to enable VPC option                                                                                                                                     | `bool`         |         |   Yes    |
-| subnet_ids                       | Subnet id's for OpenSearch resource                                                                                                                                  | `list(string)` |         |   Yes    |
-| security_group_ids               | Security Group id's for OpenSearch resource                                                                                                                          | `list(string)` |         |   Yes    |
+| vpc_options                | values would be subnet_ids and security_group_ids                                                                                                                                     | `list`         |         |   Yes    |
 | advanced_security_options_enable | Whether advanced security is enabled                                                                                                                                 | `bool`         |         |   Yes    |
 | internal_user_database_enabled   | Whether the internal user database is enabled. If not set, defaults to false by the AWS API.                                                                         | `bool`         |         |   Yes    |
-| master_user_name                 | Main user's username, which is stored in the Amazon Elasticsearch Service domain's internal database. Only specify if internal_user_database_enabled is set to true. | `string`       |         |   Yes    |
-| master_user_password             | Main user's password, which is stored in the Amazon Elasticsearch Service domain's internal database. Only specify if internal_user_database_enabled is set to true. | `string`       |         |   Yes    |
+| master_user_options                 | values would be username and password. | `list`       |         |   Yes    |
 | enforce_https                    | Whether or not to require HTTPS. Defaults to true                                                                                                                    | `bool`         |         |   Yes    |
 | tls_security_policy              | Name of the TLS security policy that needs to be applied to the HTTPS endpoint. Valid values: Policy-Min-TLS-1-0-2019-07 and Policy-Min-TLS-1-2-2019-07              | `string`       |         |   Yes    |
 | custom_endpoint_enabled          | Whether to enable custom endpoint for the Elasticsearch domain                                                                                                       | `bool`         |         |   Yes    |
@@ -91,9 +88,10 @@ Check out these related projects.
 ```hcl
 module "aws_opensearch" {
   source                  = "Location of the resource file"
-  enable_vpc_option       = false
-  subnet_ids              = ["Required Subnet Id's"]
-  security_group_ids      = ["Security group Id's"]
+  vpc_options = [{
+    subnet_ids         = [ subnet id's ]
+    security_group_ids = [Security group id]
+  }]
   name                    = aws-opensearch
   tags                    = "Required Tags"
   acm_certificate_domain  = "ACM Domain name"
@@ -106,10 +104,10 @@ module "aws_opensearch" {
   instance_type           = "m4.large.elasticsearch"
   zone_awareness_enabled  = true
   master_instance_enabled = false
-  master_instance_count   = 3
+  master_instance_count   = 0
   master_instance_type    = "r6g.large.search"
   warm_instance_enabled   = false
-  warm_instance_count     = 2
+  warm_instance_count     = 0
   warm_instance_type      = "ultrawarm1.medium.elasticsearch"
   ebs_enabled             = true
   volume_size             = 10
@@ -122,8 +120,10 @@ module "aws_opensearch" {
   encrypt_at_rest         = true
   advanced_security_options_enable = true
   internal_user_database_enabled   = true
-  master_user_name                 = "username"
-  master_user_password             = "password"
+  master_user_options = [{
+    master_user_name     = "username"
+    master_user_password = "password"
+  }]
 }
 ```
 

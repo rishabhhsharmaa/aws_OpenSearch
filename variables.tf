@@ -126,20 +126,13 @@ variable "iops" {
 
 
 # vpc_options
-variable "enable_vpc_option" {
-  type        = bool
-  description = "(Required) If you want to enable VPC option"
-  default     = true
-}
-
-variable "subnet_ids" {
-  type        = list(string)
-  description = "(Required) Subnet id's for OpenSearch resource"
-}
-
-variable "security_group_ids" {
-  type        = list(string)
-  description = "(Required) Security Group id's for OpenSearch resource"
+variable "vpc_options" {
+  description = "(Optional) values would be subnet_ids and security_group_ids"
+  type = list(object({
+    subnet_ids         = list(string)
+    security_group_ids = list(string)
+  }))
+  default = []
 }
 
 # advanced_security_options
@@ -155,14 +148,13 @@ variable "internal_user_database_enabled" {
   default     = false
 }
 
-variable "master_user_name" {
-  type = string
-  description = "(Optional) Main user's username, which is stored in the Amazon Elasticsearch Service domain's internal database. Only specify if internal_user_database_enabled is set to true."
-}
-
-variable "master_user_password" {
-  type = string
-  description = "(Optional) Main user's password, which is stored in the Amazon Elasticsearch Service domain's internal database. Only specify if internal_user_database_enabled is set to true."
+variable "master_user_options" {
+  description = "(Optional) values would be username and password"
+  type = list(object({
+    master_user_name         = string
+    master_user_password = string
+  }))
+  default = []
 }
 
 # domain_endpoint_options

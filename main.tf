@@ -23,17 +23,16 @@ resource "aws_elasticsearch_domain" "es" {
 
   ebs_options {
     ebs_enabled = var.ebs_enabled
-    volume_size = var.ebs_enabled == true ? var.volume_size : null
-    volume_type = var.ebs_enabled == true ? var.volume_type : null
-    iops        = var.ebs_enabled == true ? var.iops : null
+    volume_size = var.ebs_enabled ? var.volume_size : null
+    volume_type = var.ebs_enabled ? var.volume_type : null
+    iops        = var.ebs_enabled ? var.iops : null
   }
 
-
   dynamic "vpc_options" {
-    for_each = var.enable_vpc_option == true ? [1] : []
+    for_each = var.vpc_options
     content {
-      subnet_ids         = var.subnet_ids
-      security_group_ids = var.security_group_ids
+      subnet_ids         = vpc_options.value.subnet_ids
+      security_group_ids = vpc_options.value.security_group_ids
     }
   }
 
@@ -41,10 +40,10 @@ resource "aws_elasticsearch_domain" "es" {
     enabled                        = var.advanced_security_options_enable
     internal_user_database_enabled = var.internal_user_database_enabled
     dynamic "master_user_options" {
-      for_each = var.internal_user_database_enabled == true ? [1] : []
+      for_each = var.master_user_options
       content {
-        master_user_name     = var.master_user_name
-        master_user_password = var.master_user_password
+        master_user_name     = master_user_options.value.master_user_name
+        master_user_password = master_user_options.value.master_user_password
       }
     }
   }
@@ -69,22 +68,22 @@ CONFIG
 
   domain_endpoint_options {
     enforce_https       = var.enforce_https
-    tls_security_policy = var.enforce_https == true ? var.tls_security_policy : null
+    tls_security_policy = var.enforce_https ? var.tls_security_policy : null
 
     custom_endpoint_enabled         = var.custom_endpoint_enabled
-    custom_endpoint                 = var.custom_endpoint_enabled == true ? "${var.domain}.${var.route53_zone}" : null
-    custom_endpoint_certificate_arn = var.custom_endpoint_enabled == true ? data.aws_acm_certificate.acm.arn : null
+    custom_endpoint                 = var.custom_endpoint_enabled ? "${var.domain}.${var.route53_zone}" : null
+    custom_endpoint_certificate_arn = var.custom_endpoint_enabled ? data.aws_acm_certificate.acm.arn : null
   }
 
   dynamic "node_to_node_encryption" {
-    for_each = var.node_to_node_encryption == true ? [1] : []
+    for_each = var.node_to_node_encryption ? [1] : []
     content {
       enabled = var.node_to_node_encryption
     }
   }
 
   dynamic "encrypt_at_rest" {
-    for_each = var.encrypt_at_rest == true ? [1] : []
+    for_each = var.encrypt_at_rest ? [1] : []
     content {
       enabled    = var.encrypt_at_rest
       kms_key_id = data.aws_kms_key.by_alias.arn

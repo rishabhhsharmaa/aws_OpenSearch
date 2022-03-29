@@ -34,10 +34,11 @@ module "network_skeleton" {
 }
 
 module "aws_opensearch" {
-  source                           = "../"
-  enable_vpc_option                = false
-  subnet_ids                       = [module.network_skeleton.public_subnet_ids[0], module.network_skeleton.public_subnet_ids[1]]
-  security_group_ids               = [module.network_skeleton.web_sg_id]
+  source = "../"
+  # vpc_options = [{
+  #   subnet_ids         = [module.network_skeleton.public_subnet_ids[0], module.network_skeleton.public_subnet_ids[1]]
+  #   security_group_ids = [module.network_skeleton.web_sg_id]
+  # }]
   name                             = var.name
   tags                             = var.tags
   acm_certificate_domain           = "www.mydevopsprojects.co.in"
@@ -64,6 +65,8 @@ module "aws_opensearch" {
   encrypt_at_rest                  = true
   advanced_security_options_enable = true
   internal_user_database_enabled   = true
-  master_user_name                 = "admin"
-  master_user_password             = "pUTQkenu@Y5Pn"
+  master_user_options = [{
+    master_user_name     = "admin"
+    master_user_password = "pUTQkenu@Y5Pn"
+  }]
 }
